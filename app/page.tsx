@@ -33,6 +33,7 @@ const PRIORITY_ORDER: Record<Priority, number> = {
   medium: 1,
   low: 2,
 };
+const REMINDER_VALUES = ['15', '30', '60', '120', '1440', '2880', '10080'] as const;
 
 function toInputDateTime(value: string | null): string {
   if (!value) {
@@ -480,6 +481,11 @@ export default function HomePage() {
   };
 
   const setEditing = (todo: TodoDetails) => {
+    const reminderValue = todo.reminder_minutes !== null ? String(todo.reminder_minutes) : '';
+    const normalizedReminder = REMINDER_VALUES.includes(reminderValue as (typeof REMINDER_VALUES)[number])
+      ? (reminderValue as TodoFormState['reminder_minutes'])
+      : '';
+
     setEditingTodo(todo);
     setForm({
       title: todo.title,
@@ -487,7 +493,7 @@ export default function HomePage() {
       due_date: toInputDateTime(todo.due_date),
       priority: todo.priority,
       recurrence_pattern: todo.recurrence_pattern,
-      reminder_minutes: todo.reminder_minutes ? String(todo.reminder_minutes) as TodoFormState['reminder_minutes'] : '',
+      reminder_minutes: normalizedReminder,
       tag_ids: todo.tags.map((tag) => tag.id),
     });
   };

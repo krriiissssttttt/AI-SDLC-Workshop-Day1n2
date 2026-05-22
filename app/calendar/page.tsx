@@ -22,6 +22,7 @@ function getMonthBounds(month: string): { start: string; end: string } {
 
 export default function CalendarPage() {
   const today = new Date();
+  const todayIso = today.toISOString().slice(0, 10);
   const [month, setMonth] = useState(toMonthString(today));
   const [todos, setTodos] = useState<TodoDetails[]>([]);
   const [holidays, setHolidays] = useState<Holiday[]>([]);
@@ -153,7 +154,7 @@ export default function CalendarPage() {
           {calendarDays.map((day) => {
             const key = day.toISOString().slice(0, 10);
             const isCurrentMonth = key.startsWith(month);
-            const isToday = key === new Date().toISOString().slice(0, 10);
+            const isToday = key === todayIso;
             const isWeekend = day.getDay() === 0 || day.getDay() === 6;
             const holiday = holidayMap.get(key);
             const dayTodos = todosByDay.get(key) ?? [];

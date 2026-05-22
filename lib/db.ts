@@ -398,13 +398,8 @@ function seedHolidays() {
   const year = getSingaporeNow().getFullYear();
   const rows: Array<{ date: string; name: string }> = [
     { date: `${year}-01-01`, name: "New Year's Day" },
-    { date: `${year}-02-17`, name: 'Chinese New Year' },
-    { date: `${year}-02-18`, name: 'Chinese New Year Holiday' },
-    { date: `${year}-04-10`, name: 'Good Friday' },
     { date: `${year}-05-01`, name: 'Labour Day' },
-    { date: `${year}-05-12`, name: 'Vesak Day' },
     { date: `${year}-08-09`, name: 'National Day' },
-    { date: `${year}-10-20`, name: 'Deepavali' },
     { date: `${year}-12-25`, name: 'Christmas Day' },
   ];
 
@@ -1275,7 +1270,7 @@ function validatePayload(payload: ExportPayloadV1): string[] {
       errors.push('Todo completion state is invalid.');
     }
 
-    if (todo.reminder_minutes !== null && todo.reminder_minutes !== undefined && !REMINDER_OPTIONS.has(todo.reminder_minutes)) {
+    if (!REMINDER_OPTIONS.has(todo.reminder_minutes ?? Number.NaN)) {
       errors.push('Todo reminder value is invalid.');
     }
 
