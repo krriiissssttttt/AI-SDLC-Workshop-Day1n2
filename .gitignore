@@ -33,3 +33,7 @@ todos.db-wal
 
 # local tooling
 .tools/
+
+# test artifacts
+playwright-report/
+test-results/
