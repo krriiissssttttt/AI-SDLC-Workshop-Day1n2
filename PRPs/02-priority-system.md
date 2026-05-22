@@ -362,3 +362,35 @@ Accessibility requirements:
 - [../README.md](../README.md)
 - [README.md](README.md)
 - [01-todo-crud-operations.md](01-todo-crud-operations.md)
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 01-todo-crud-operations.md
+- **Enables:** 08-search-filtering.md
+- **Execution phase:** Phase 1 (Foundation)
+
+### Blockers to Clear Before Sign-off
+- Todo type/schema must already include a stable priority field default.
+- Existing todos need deterministic fallback/default behavior.
+- Sort order contract must be finalized before filter composition in Feature 08.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 02 Implementation Checklist | Data Model, API Endpoints, UI Components, Sorting Rules | API contract tests + UI snapshots |
+| Feature 02 Testing | Testing Requirements | Playwright priority tests |
+| Feature 02 Acceptance Criteria | Acceptance Criteria | Filter/sort validation report |

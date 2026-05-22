@@ -414,3 +414,35 @@ These are handled by other PRPs or future enhancements.
 - Project-wide instructions: .github/copilot-instructions.md
 - Feature index and dependencies: PRPs/README.md
 - User-facing behavior and examples: USER_GUIDE.md
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 01-todo-crud-operations.md
+- **Enables:** 07-template-system.md
+- **Execution phase:** Phase 2 (Core Behavior)
+
+### Blockers to Clear Before Sign-off
+- Subtask position and reorder behavior must be deterministic.
+- Cascade delete behavior must be enforced at DB and API levels.
+- Progress calculation contract must be finalized before template serialization reuse.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 05 Implementation Checklist | Data Model, API Endpoints, Progress Rules, UI Components | API + unit progress tests |
+| Feature 05 Testing | Testing Requirements | Playwright subtask/progress flows |
+| Feature 05 Acceptance Criteria | Acceptance Criteria | Cascade + progress QA checks |

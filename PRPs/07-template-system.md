@@ -465,3 +465,35 @@ These can be handled by future PRPs.
 - Project-wide instructions: .github/copilot-instructions.md
 - Feature index and dependencies: PRPs/README.md
 - User-facing behavior and examples: USER_GUIDE.md
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 01-todo-crud-operations.md, 05-subtasks-progress.md, 06-tag-system.md
+- **Enables:** 09-export-import.md (template payload integrity)
+- **Execution phase:** Phase 4 (Productivity)
+
+### Blockers to Clear Before Sign-off
+- Subtasks JSON schema must be canonical and versioned by contract.
+- Due-date offset behavior must be Singapore-timezone consistent.
+- Template-to-todo materialization must be transactional to avoid partial creates.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 07 Implementation Checklist | Data Model, Serialization Rules, API Endpoints, Use Template Flow | Template API tests |
+| Feature 07 Testing | Testing Requirements | Playwright template create/use tests |
+| Feature 07 Acceptance Criteria | Acceptance Criteria | Offset and subtask materialization QA |

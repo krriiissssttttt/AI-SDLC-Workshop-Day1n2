@@ -136,40 +136,74 @@ Please help me implement this following the project patterns."
 
 ### Feature Dependencies
 
-Some features depend on others being implemented first:
+Core dependency graph and execution constraints:
 
 ```
-Todo CRUD (01) → Priority (02), Recurring (03), Subtasks (05), Tags (06)
-Tags (06) → Search/Filtering (08)
-Subtasks (05) → Templates (07)
-Todos (01) → Export/Import (09), Calendar (10)
-Authentication (11) → All features (require session for production, but can be added last)
+11 (Authentication) -> required capability for production user-scoped behavior across 01-10
+01 (Todo CRUD) -> foundation for 02,03,04,05,06,08,09,10
+02 (Priority) -> required by 08 (priority filters/sort behavior)
+05 (Subtasks) -> required by 07 (template subtask serialization/materialization)
+06 (Tags) -> required by 08, and consumed by 07 and 09
+03 (Recurring) + 04 (Reminders) -> depend on 01 due-date/time correctness
+09 (Export/Import) -> depends on stable contracts in 01,03,05,06,07
+10 (Calendar) -> depends on 01 due dates + holidays data path
 ```
 
-## 📊 Implementation Priority
+## 📊 Implementation Priority (Blocker-Aware)
 
-Recommended implementation order:
+1. **Phase 0 - PRP Normalization**
+   - Standardize all PRPs to include: feature overview, user flow, technical requirements, edge cases, acceptance criteria, testing requirements, out of scope, success metrics.
+   - Ensure every PRP has explicit architecture guardrails aligned to `.github/copilot-instructions.md`.
 
-1. **Phase 1 - Foundation**
+2. **Phase 1 - Foundation**
    - 01: Todo CRUD
    - 02: Priority System
+   - **Blocker gate:** CRUD contracts, due-date validation, and priority default/sort behavior are stable.
 
-2. **Phase 2 - Core Features**
+3. **Phase 2 - Core Behavior**
    - 03: Recurring Todos
    - 04: Reminders & Notifications
    - 05: Subtasks & Progress
+   - **Blocker gate:** recurring/reminder/subtask contracts are user-scoped, idempotent where needed, and timezone-correct.
 
-3. **Phase 3 - Organization**
+4. **Phase 3 - Organization**
    - 06: Tag System
    - 08: Search & Filtering
+   - **Blocker gate:** tag uniqueness and multi-criteria filter semantics are finalized.
 
-4. **Phase 4 - Productivity**
+5. **Phase 4 - Productivity**
    - 07: Template System
    - 09: Export & Import
    - 10: Calendar View
+   - **Blocker gate:** template serialization, import/export integrity, and calendar holiday handling are fully specified.
 
-5. **Phase 5 - Infrastructure** (can be developed in parallel or last)
+6. **Phase 5 - Infrastructure/Security Hardening**
    - 11: Authentication (WebAuthn)
+   - **Blocker gate:** middleware/session enforcement and WebAuthn verification safeguards are validated.
+
+## ✅ Evaluation Traceability Matrix
+
+Each PRP must explicitly map to its corresponding `EVALUATION.md` feature section:
+
+| PRP file | EVALUATION.md section |
+|---|---|
+| 01-todo-crud-operations.md | Feature 01: Todo CRUD Operations |
+| 02-priority-system.md | Feature 02: Priority System |
+| 03-recurring-todos.md | Feature 03: Recurring Todos |
+| 04-reminders-notifications.md | Feature 04: Reminders & Notifications |
+| 05-subtasks-progress.md | Feature 05: Subtasks & Progress Tracking |
+| 06-tag-system.md | Feature 06: Tag System |
+| 07-template-system.md | Feature 07: Template System |
+| 08-search-filtering.md | Feature 08: Search & Filtering |
+| 09-export-import.md | Feature 09: Export & Import |
+| 10-calendar-view.md | Feature 10: Calendar View |
+| 11-authentication-webauthn.md | Feature 11: Authentication & Security |
+
+Additionally, each PRP must include:
+- Traceability from implementation checklist items to test requirements.
+- At least one unit/integration/E2E verification path for every acceptance criterion.
+- Explicit enforcement of Singapore timezone rules when date/time is involved.
+- Explicit user ownership and auth requirements on all API contracts.
 
 ## 🛠️ Technical Stack Reference
 
@@ -200,6 +234,6 @@ When adding new PRPs:
 
 ---
 
-**Last Updated**: November 11, 2025
+**Last Updated**: May 22, 2026
 **Total PRPs**: 11
 **Total Features Documented**: 10 core application features + 1 infrastructure feature

@@ -477,3 +477,35 @@ describe('ID remapping', () => {
 - 99% import success rate (valid files)
 - < 2 second import time for typical use (< 100 todos)
 - Zero data loss on export/import cycle
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 01-todo-crud-operations.md, 05-subtasks-progress.md, 06-tag-system.md, 07-template-system.md, 03-recurring-todos.md
+- **Enables:** Backup/recovery workflows
+- **Execution phase:** Phase 4 (Productivity)
+
+### Blockers to Clear Before Sign-off
+- Stable canonical schema across todos, subtasks, tags, templates, recurrence.
+- ID remapping and relationship reconstruction must be transaction-safe.
+- Import validation must reject malformed or cross-user-unsafe payloads.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 09 Implementation Checklist | Export Format, Import API, Validation, Data Preservation | Export/import integration tests |
+| Feature 09 Testing | Testing Requirements | Playwright backup/restore flows |
+| Feature 09 Acceptance Criteria | Acceptance Criteria | Round-trip integrity QA report |
