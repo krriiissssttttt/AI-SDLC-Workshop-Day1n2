@@ -453,3 +453,35 @@ describe('Calendar generation', () => {
 - Average 3+ month navigations per session
 - 30% of users create todos from calendar view (future feature)
 - Calendar page load time < 1 second
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 01-todo-crud-operations.md
+- **Enables:** Date-centric planning UX
+- **Execution phase:** Phase 4 (Productivity)
+
+### Blockers to Clear Before Sign-off
+- Due-date normalization must be Singapore-timezone correct.
+- Holiday dataset availability and refresh process must be defined.
+- Calendar rendering rules for overdue/completed states must be finalized.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 10 Implementation Checklist | Calendar Data Model, UI Components, Holiday Integration, Navigation Rules | Calendar API/UI tests |
+| Feature 10 Testing | Testing Requirements | Playwright calendar navigation tests |
+| Feature 10 Acceptance Criteria | Acceptance Criteria | Holiday + due-date display QA checks |

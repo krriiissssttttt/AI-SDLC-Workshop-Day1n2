@@ -214,3 +214,35 @@ use: {
 - < 5 second authentication time
 - Zero password reset requests (no passwords!)
 - < 1% authentication errors
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** None (infrastructure capability)
+- **Enables:** All user-scoped features in 01-10
+- **Execution phase:** Phase 5 (Infrastructure/Security Hardening, parallelizable earlier)
+
+### Blockers to Clear Before Sign-off
+- WebAuthn challenge/verification flow must be robust across browsers.
+- Session cookie policy and middleware route protection must be enforced.
+- Authenticator counter handling must use null-safe fallback (`counter ?? 0`).
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 11 Implementation Checklist | Auth Flows, API Endpoints, Middleware Protection, Session Management | Auth integration and E2E tests |
+| Feature 11 Testing | Testing Requirements | Playwright virtual authenticator runs |
+| Feature 11 Acceptance Criteria | Acceptance Criteria | Security + session behavior QA |

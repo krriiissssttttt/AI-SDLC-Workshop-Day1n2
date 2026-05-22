@@ -370,3 +370,35 @@ These are covered in dedicated PRPs.
 - Project-wide patterns: .github/copilot-instructions.md
 - Feature index and workflow: PRPs/README.md
 - User behavior expectations: USER_GUIDE.md
+
+## Architecture Guardrails (Mandatory)
+
+This PRP MUST follow `/home/runner/work/AI-SDLC-Workshop-Day1n2/AI-SDLC-Workshop-Day1n2/.github/copilot-instructions.md`:
+
+- Next.js 16 App Router with React 19 and Tailwind CSS 4.
+- API routes are the backend boundary; auth-first checks and strict user scoping on all data operations.
+- SQLite via `better-sqlite3` with synchronous DB logic centralized in `lib/db.ts`.
+- All date/time logic uses Singapore timezone utilities from `lib/timezone.ts`.
+- WebAuthn/passkeys + JWT cookie sessions remain the only authentication model.
+- Main todo UX follows existing monolithic client-page pattern unless route-specific behavior requires otherwise.
+- Playwright E2E coverage is required for user-critical flows.
+
+## Feature Dependencies & Blockers
+
+### Dependency Plan
+- **Depends on:** 11-authentication-webauthn.md (session + user scoping in production)
+- **Enables:** 02-priority-system.md, 03-recurring-todos.md, 04-reminders-notifications.md, 05-subtasks-progress.md, 06-tag-system.md, 08-search-filtering.md, 09-export-import.md, 10-calendar-view.md
+- **Execution phase:** Phase 1 (Foundation)
+
+### Blockers to Clear Before Sign-off
+- DB schema for todos must be stable before dependent features proceed.
+- CRUD API contracts must include consistent error and validation behavior.
+- Singapore timezone due-date validation must be finalized first.
+
+## Evaluation Traceability (EVALUATION.md)
+
+| EVALUATION.md section | PRP coverage sections | Verification artifact |
+|---|---|---|
+| Feature 01 Implementation Checklist | Technical Requirements, API Contracts, Validation, UI Components | CRUD API tests + Playwright CRUD flows |
+| Feature 01 Testing | Testing Requirements (Unit/Integration/E2E) | CI test results |
+| Feature 01 Acceptance Criteria | Acceptance Criteria | Manual QA checklist + E2E evidence |
