@@ -41,6 +41,24 @@ export interface TodoTag {
   tag_id: number;
 }
 
+export interface User {
+  id: number;
+  username: string;
+  created_at: string;
+}
+
+export interface Authenticator {
+  id: number;
+  user_id: number;
+  credential_id: string;
+  credential_public_key: string;
+  counter: number | null;
+  credential_device_type: string | null;
+  credential_backed_up: 0 | 1 | null;
+  transports: string | null;
+  created_at: string;
+}
+
 export interface ExportPayloadV1 {
   version: '1.0';
   exported_at: string;
@@ -79,6 +97,19 @@ function initializeSchema() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL UNIQUE,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS authenticators (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      credential_id TEXT NOT NULL UNIQUE,
+      credential_public_key TEXT NOT NULL,
+      counter INTEGER NOT NULL DEFAULT 0,
+      credential_device_type TEXT,
+      credential_backed_up INTEGER DEFAULT 0,
+      transports TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS todos (
@@ -250,6 +281,77 @@ export function findUserByUsername(username: string): { id: number; username: st
     | undefined;
 
   return user ?? null;
+}
+
+export function findUserById(userId: number): { id: number; username: string } | null {
+  const user = db.prepare('SELECT id, username FROM users WHERE id = ?').get(userId) as
+    | { id: number; username: string }
+    | undefined;
+
+  return user ?? null;
+}
+
+export function createAuthenticator(input: {
+  userId: number;
+  credentialId: string;
+  credentialPublicKey: string;
+  counter: number;
+  credentialDeviceType: string | null;
+  credentialBackedUp: boolean;
+  transports: string | null;
+}): number {
+  const result = db
+    .prepare(
+      `INSERT INTO authenticators (
+        user_id,
+        credential_id,
+        credential_public_key,
+        counter,
+        credential_device_type,
+        credential_backed_up,
+        transports
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    )
+    .run(
+      input.userId,
+      input.credentialId,
+      input.credentialPublicKey,
+      input.counter,
+      input.credentialDeviceType,
+      input.credentialBackedUp ? 1 : 0,
+      input.transports
+    );
+
+  return Number(result.lastInsertRowid);
+}
+
+export function findAuthenticatorByCredentialId(credentialId: string): Authenticator | null {
+  const authenticator = db
+    .prepare(
+      `SELECT id, user_id, credential_id, credential_public_key, counter, credential_device_type, credential_backed_up, transports, created_at
+       FROM authenticators
+       WHERE credential_id = ?`
+    )
+    .get(credentialId) as Authenticator | undefined;
+
+  return authenticator ?? null;
+}
+
+export function listAuthenticatorsByUserId(userId: number): Authenticator[] {
+  const authenticators = db
+    .prepare(
+      `SELECT id, user_id, credential_id, credential_public_key, counter, credential_device_type, credential_backed_up, transports, created_at
+       FROM authenticators
+       WHERE user_id = ?
+       ORDER BY id ASC`
+    )
+    .all(userId) as Authenticator[];
+
+  return authenticators;
+}
+
+export function updateAuthenticatorCounter(credentialId: string, counter: number): void {
+  db.prepare('UPDATE authenticators SET counter = ? WHERE credential_id = ?').run(counter, credentialId);
 }
 
 export function buildExportPayload(userId: number): ExportPayloadV1 {

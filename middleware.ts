@@ -35,12 +35,17 @@ async function hasValidSession(request: NextRequest): Promise<boolean> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const needsAuth = protectedPaths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
+  const isLoginRoute = pathname === '/login' || pathname.startsWith('/login/');
+  const validSession = await hasValidSession(request);
+
+  if (isLoginRoute && validSession) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 
   if (!needsAuth) {
     return NextResponse.next();
   }
 
-  const validSession = await hasValidSession(request);
   if (validSession) {
     return NextResponse.next();
   }
@@ -50,5 +55,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/calendar/:path*'],
+  matcher: ['/', '/calendar/:path*', '/login/:path*'],
 };

@@ -7,6 +7,19 @@ type ImportMode = 'merge' | 'replace';
 export default function HomePage() {
   const [mode, setMode] = useState<ImportMode>('merge');
   const [status, setStatus] = useState('Ready');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const logout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } finally {
+      window.location.href = '/login';
+    }
+  };
 
   const exportData = async () => {
     setStatus('Exporting...');
@@ -68,6 +81,12 @@ export default function HomePage() {
 
   return (
     <main className="container">
+      <section style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button onClick={() => void logout()} disabled={isLoggingOut} style={{ padding: '8px 14px' }}>
+          {isLoggingOut ? 'Logging out...' : 'Logout'}
+        </button>
+      </section>
+
       <h1>Todo App Scaffold</h1>
       <p>This is a starter shell based on the workshop README architecture.</p>
 
