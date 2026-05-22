@@ -171,3 +171,17 @@ progress {
 .calendar-holiday {
   background: #fee2e2;
 }
+
+.status-page {
+  max-width: 640px;
+  margin: 5rem auto;
+  text-align: center;
+}
+
+.status-page-title {
+  margin-bottom: 0.5rem;
+}
+
+.status-page-text {
+  margin-bottom: 1.5rem;
+}

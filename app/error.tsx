@@ -8,9 +8,9 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <main className="container" style={{ maxWidth: 640, margin: '5rem auto', textAlign: 'center' }}>
-      <h1 style={{ marginBottom: '0.5rem' }}>Something went wrong</h1>
-      <p className="muted" style={{ marginBottom: '1.5rem' }}>
+    <main className="container status-page">
+      <h1 className="status-page-title">Something went wrong</h1>
+      <p className="muted status-page-text">
         {error.message || 'An unexpected error occurred.'}
       </p>
       <button type="button" onClick={() => reset()}>

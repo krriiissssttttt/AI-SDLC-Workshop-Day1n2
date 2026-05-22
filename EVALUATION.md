@@ -872,7 +872,7 @@ Or via Dashboard:
 - Major gap remains automated testing: no Playwright/Jest-style test suite currently present in repository.
 - Deployment/readiness gaps addressed in this pass: added `.env.example`, `vercel.json`, `railway.json`, `nixpacks.toml`, `Procfile`, and production `start` script using `$PORT`.
 - Production resilience improved by adding explicit `app/not-found.tsx` and `app/error.tsx`.
-- Security follow-up needed: `npm install` reported 2 vulnerabilities (1 moderate, 1 critical) from dependency audit.
+- Security follow-up needed: after upgrading Next.js to 16.2.6, `npm audit` still reports 2 moderate vulnerabilities tied to `postcss` advisory resolution in npm audit metadata.
 
 ---
 
