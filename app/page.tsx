@@ -377,8 +377,8 @@ export default function HomePage() {
         recurrence_pattern: editingTodo.recurrence_pattern,
         reminder_minutes: editingTodo.reminder_minutes,
         due_date_offset_days: null,
-        subtasks: editingTodo.subtasks.map((subtask, index) => ({ title: subtask.title, position: subtask.position ?? index })),
-      }),
+        subtasks: editingTodo.subtasks.map((subtask, index) => ({ title: subtask.title, position: index })),
+      }), 
     });
 
     const result = await response.json();
@@ -482,9 +482,7 @@ export default function HomePage() {
 
   const setEditing = (todo: TodoDetails) => {
     const reminderValue = todo.reminder_minutes !== null ? String(todo.reminder_minutes) : '';
-    const normalizedReminder = REMINDER_VALUES.includes(reminderValue as (typeof REMINDER_VALUES)[number])
-      ? (reminderValue as TodoFormState['reminder_minutes'])
-      : '';
+    const normalizedReminder = REMINDER_VALUES.find((value) => value === reminderValue) ?? '';
 
     setEditingTodo(todo);
     setForm({

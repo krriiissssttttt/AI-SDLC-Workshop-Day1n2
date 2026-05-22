@@ -395,13 +395,17 @@ function initializeSchema() {
 }
 
 function seedHolidays() {
-  const year = getSingaporeNow().getFullYear();
-  const rows: Array<{ date: string; name: string }> = [
-    { date: `${year}-01-01`, name: "New Year's Day" },
-    { date: `${year}-05-01`, name: 'Labour Day' },
-    { date: `${year}-08-09`, name: 'National Day' },
-    { date: `${year}-12-25`, name: 'Christmas Day' },
-  ];
+  const baseYear = getSingaporeNow().getFullYear();
+  const rows: Array<{ date: string; name: string }> = [];
+
+  for (let year = baseYear - 2; year <= baseYear + 2; year += 1) {
+    rows.push(
+      { date: `${year}-01-01`, name: "New Year's Day" },
+      { date: `${year}-05-01`, name: 'Labour Day' },
+      { date: `${year}-08-09`, name: 'National Day' },
+      { date: `${year}-12-25`, name: 'Christmas Day' }
+    );
+  }
 
   const insert = db.prepare('INSERT OR IGNORE INTO holidays (date, name) VALUES (?, ?)');
   const transaction = db.transaction(() => {
@@ -1270,7 +1274,7 @@ function validatePayload(payload: ExportPayloadV1): string[] {
       errors.push('Todo completion state is invalid.');
     }
 
-    if (!REMINDER_OPTIONS.has(todo.reminder_minutes ?? Number.NaN)) {
+    if (todo.reminder_minutes !== null && todo.reminder_minutes !== undefined && !REMINDER_OPTIONS.has(todo.reminder_minutes)) {
       errors.push('Todo reminder value is invalid.');
     }
 
