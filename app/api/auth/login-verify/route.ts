@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuthenticationResponse } from '@simplewebauthn/server';
+import {
+  verifyAuthenticationResponse,
+  type AuthenticationResponseJSON,
+  type AuthenticatorTransportFuture,
+} from '@simplewebauthn/server';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
 import { setSession } from '@/lib/auth';
 import { findAuthenticatorByCredentialId, findUserByUsername, updateAuthenticatorCounter } from '@/lib/db';
@@ -24,7 +28,7 @@ function parseTransports(raw: string | null): AuthenticatorTransportFuture[] | u
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as { username?: string; response?: { id?: string } };
+    const body = (await request.json()) as { username?: string; response?: AuthenticationResponseJSON };
     const username = normalizeUsername(body.username ?? '');
 
     if (!isValidUsername(username) || !body.response?.id) {
@@ -53,9 +57,9 @@ export async function POST(request: NextRequest) {
       expectedOrigin: webAuthnConfig.expectedOrigin,
       expectedRPID: webAuthnConfig.expectedRPID,
       requireUserVerification: true,
-      authenticator: {
-        credentialID: isoBase64URL.toBuffer(authenticator.credential_id),
-        credentialPublicKey: isoBase64URL.toBuffer(authenticator.credential_public_key),
+      credential: {
+        id: authenticator.credential_id,
+        publicKey: isoBase64URL.toBuffer(authenticator.credential_public_key),
         counter: authenticator.counter ?? 0,
         transports: parseTransports(authenticator.transports),
       },

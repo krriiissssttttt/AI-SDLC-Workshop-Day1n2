@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAuthenticationOptions } from '@simplewebauthn/server';
+import { generateAuthenticationOptions, type AuthenticatorTransportFuture } from '@simplewebauthn/server';
 import { findUserByUsername, listAuthenticatorsByUserId } from '@/lib/db';
 import { getWebAuthnConfig, isValidUsername, normalizeUsername, setPendingChallenge } from '@/lib/webauthn';
 

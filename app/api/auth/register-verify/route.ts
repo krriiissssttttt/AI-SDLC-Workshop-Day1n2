@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyRegistrationResponse } from '@simplewebauthn/server';
+import { verifyRegistrationResponse, type RegistrationResponseJSON } from '@simplewebauthn/server';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
-import { createSessionToken, setSession } from '@/lib/auth';
+import { setSession } from '@/lib/auth';
 import { createAuthenticator, createUser, findUserByUsername } from '@/lib/db';
 import { consumePendingChallenge, getWebAuthnConfig, isValidUsername, normalizeUsername } from '@/lib/webauthn';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as { username?: string; response?: unknown };
+    const body = (await request.json()) as { username?: string; response?: RegistrationResponseJSON };
     const username = normalizeUsername(body.username ?? '');
 
     if (!isValidUsername(username) || !body.response) {
@@ -38,11 +38,19 @@ export async function POST(request: NextRequest) {
 
     const { registrationInfo } = verification;
     const userId = createUser(username);
+    const credentialId =
+      typeof registrationInfo.credential.id === 'string'
+        ? registrationInfo.credential.id
+        : isoBase64URL.fromBuffer(registrationInfo.credential.id);
+    const credentialPublicKey =
+      typeof registrationInfo.credential.publicKey === 'string'
+        ? registrationInfo.credential.publicKey
+        : isoBase64URL.fromBuffer(registrationInfo.credential.publicKey);
 
     createAuthenticator({
       userId,
-      credentialId: isoBase64URL.fromBuffer(registrationInfo.credential.id),
-      credentialPublicKey: isoBase64URL.fromBuffer(registrationInfo.credential.publicKey),
+      credentialId,
+      credentialPublicKey,
       counter: registrationInfo.credential.counter ?? 0,
       credentialDeviceType: registrationInfo.credentialDeviceType ?? null,
       credentialBackedUp: registrationInfo.credentialBackedUp,

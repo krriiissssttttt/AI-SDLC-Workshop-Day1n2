@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser';
+import type { PublicKeyCredentialCreationOptionsJSON, PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
 
 type AuthMode = 'login' | 'register';
+type ErrorResponse = { error?: string };
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -33,16 +35,19 @@ export default function LoginPage() {
         body: JSON.stringify({ username: normalizedUsername }),
       });
 
-      const optionsPayload = (await optionsResponse.json()) as { error?: string };
+      const optionsPayload = (await optionsResponse.json()) as
+        | ErrorResponse
+        | PublicKeyCredentialCreationOptionsJSON
+        | PublicKeyCredentialRequestOptionsJSON;
       if (!optionsResponse.ok) {
-        setStatus(optionsPayload.error ?? 'Failed to initialize passkey flow.');
+        setStatus((optionsPayload as ErrorResponse).error ?? 'Failed to initialize passkey flow.');
         return;
       }
 
       const passkeyResponse =
         mode === 'register'
-          ? await startRegistration({ optionsJSON: optionsPayload })
-          : await startAuthentication({ optionsJSON: optionsPayload });
+          ? await startRegistration({ optionsJSON: optionsPayload as PublicKeyCredentialCreationOptionsJSON })
+          : await startAuthentication({ optionsJSON: optionsPayload as PublicKeyCredentialRequestOptionsJSON });
 
       const verifyResponse = await fetch(`/api/auth/${mode}-verify`, {
         method: 'POST',
