@@ -23,6 +23,9 @@ pnpm-debug.log*
 
 # local db
 todos.db
+todos.db-shm
+todos.db-wal
+*.tsbuildinfo
 
 # logs
 *.log
