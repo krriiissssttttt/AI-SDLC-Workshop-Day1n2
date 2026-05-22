@@ -8,6 +8,9 @@ on:
       - solution
       - "copilot/**"
 
+permissions:
+  contents: read
+
 jobs:
   quality:
     runs-on: ubuntu-latest
