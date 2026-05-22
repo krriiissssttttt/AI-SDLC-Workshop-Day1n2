@@ -398,7 +398,7 @@ function seedHolidays() {
   const baseYear = getSingaporeNow().getFullYear();
   const rows: Array<{ date: string; name: string }> = [];
 
-  for (let year = baseYear - 2; year <= baseYear + 2; year += 1) {
+  for (let year = baseYear - 10; year <= baseYear + 10; year += 1) {
     rows.push(
       { date: `${year}-01-01`, name: "New Year's Day" },
       { date: `${year}-05-01`, name: 'Labour Day' },
@@ -1274,7 +1274,7 @@ function validatePayload(payload: ExportPayloadV1): string[] {
       errors.push('Todo completion state is invalid.');
     }
 
-    if (todo.reminder_minutes !== null && todo.reminder_minutes !== undefined && !REMINDER_OPTIONS.has(todo.reminder_minutes)) {
+    if (todo.reminder_minutes != null && !REMINDER_OPTIONS.has(todo.reminder_minutes)) {
       errors.push('Todo reminder value is invalid.');
     }
 

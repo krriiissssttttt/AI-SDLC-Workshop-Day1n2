@@ -378,7 +378,7 @@ export default function HomePage() {
         reminder_minutes: editingTodo.reminder_minutes,
         due_date_offset_days: null,
         subtasks: editingTodo.subtasks.map((subtask, index) => ({ title: subtask.title, position: index })),
-      }), 
+      }),
     });
 
     const result = await response.json();
@@ -540,7 +540,7 @@ export default function HomePage() {
             <p className="muted">
               Progress: {todo.progress.completed}/{todo.progress.total} ({todo.progress.percentage}%)
             </p>
-            <progress value={todo.progress.completed} max={Math.max(todo.progress.total, 1)} />
+            {todo.progress.total > 0 ? <progress value={todo.progress.completed} max={todo.progress.total} /> : null}
 
             {todo.subtasks.map((subtask) => (
               <div className="row between" key={subtask.id}>
