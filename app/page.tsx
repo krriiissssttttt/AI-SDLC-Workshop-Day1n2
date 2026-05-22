@@ -537,10 +537,16 @@ export default function HomePage() {
           </div>
 
           <div className="subtasks">
-            <p className="muted">
-              Progress: {todo.progress.completed}/{todo.progress.total} ({todo.progress.percentage}%)
-            </p>
-            {todo.progress.total > 0 ? <progress value={todo.progress.completed} max={todo.progress.total} /> : null}
+            {todo.progress.total > 0 ? (
+              <>
+                <p className="muted">
+                  Progress: {todo.progress.completed}/{todo.progress.total} ({todo.progress.percentage}%)
+                </p>
+                <progress value={todo.progress.completed} max={todo.progress.total} />
+              </>
+            ) : (
+              <p className="muted">No subtasks yet.</p>
+            )}
 
             {todo.subtasks.map((subtask) => (
               <div className="row between" key={subtask.id}>
