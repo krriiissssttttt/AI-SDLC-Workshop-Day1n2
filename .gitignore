@@ -20,6 +20,7 @@ pnpm-debug.log*
 
 # env files
 .env*
+!.env.example
 
 # local db
 todos.db
@@ -32,3 +33,7 @@ todos.db-wal
 
 # local tooling
 .tools/
+
+# test artifacts
+playwright-report/
+test-results/

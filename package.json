@@ -10,24 +10,31 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:unit": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@simplewebauthn/browser": "^13.2.0",
     "@simplewebauthn/server": "^13.2.0",
     "better-sqlite3": "^11.8.1",
     "jose": "^6.0.11",
-    "next": "16.0.1",
+    "next": "^16.2.6",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^22.15.30",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^9.27.0",
-    "eslint-config-next": "16.0.1",
-    "typescript": "^5.8.3"
+    "eslint-config-next": "^16.2.6",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.7"
   }
 }
