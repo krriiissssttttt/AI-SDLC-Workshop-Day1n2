@@ -21,15 +21,47 @@ export function normalizeUsername(username: string): string {
   return username.trim();
 }
 
+function normalizeConfiguredOrigin(value: string): string {
+  const parsed = new URL(value);
+  return parsed.origin;
+}
+
+function normalizeConfiguredRpId(value: string): string {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized || normalized.includes('://') || normalized.includes('/')) {
+    throw new Error('WEBAUTHN_RP_ID must be a hostname only (for example: example.com)');
+  }
+
+  return normalized;
+}
+
+function resolveExpectedOrigin(request: NextRequest): string {
+  const configuredOrigin = process.env.WEBAUTHN_ORIGIN?.trim();
+  if (configuredOrigin) {
+    return normalizeConfiguredOrigin(configuredOrigin);
+  }
+
+  const requestOrigin = request.headers.get('origin') ?? new URL(request.url).origin;
+  return new URL(requestOrigin).origin;
+}
+
 export function getWebAuthnConfig(request: NextRequest): { expectedOrigin: string; expectedRPID: string; rpName: string } {
-  const origin = request.headers.get('origin') ?? new URL(request.url).origin;
-  const expectedOrigin = new URL(origin).origin;
-  const expectedRPID = new URL(expectedOrigin).hostname;
+  const configuredOrigin = process.env.WEBAUTHN_ORIGIN?.trim();
+  const configuredRpId = process.env.WEBAUTHN_RP_ID?.trim();
+  const isProduction = process.env.NODE_ENV === 'production';
+
+  if (isProduction && (!configuredOrigin || !configuredRpId)) {
+    throw new Error('WEBAUTHN_ORIGIN and WEBAUTHN_RP_ID must be configured in production');
+  }
+
+  const expectedOrigin = resolveExpectedOrigin(request);
+  const expectedRPID = configuredRpId ? normalizeConfiguredRpId(configuredRpId) : new URL(expectedOrigin).hostname;
+  const rpName = process.env.WEBAUTHN_RP_NAME?.trim() || 'Todo App';
 
   return {
     expectedOrigin,
     expectedRPID,
-    rpName: 'Todo App',
+    rpName,
   };
 }
 
