@@ -24,6 +24,11 @@ export default function LoginPage() {
       return;
     }
 
+    if (!window.isSecureContext) {
+      setStatus('Passkeys require a secure context. Use HTTPS or a trusted localhost origin.');
+      return;
+    }
+
     setLoadingMode(mode);
     setStatus(mode === 'register' ? 'Preparing registration...' : 'Preparing login...');
 
@@ -69,6 +74,8 @@ export default function LoginPage() {
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         setStatus('Authentication cancelled.');
+      } else if (error instanceof Error && error.name === 'NotAllowedError') {
+        setStatus('Passkey request was cancelled or blocked. Please try again.');
       } else {
         setStatus('Authentication failed. Please try again.');
       }
@@ -78,51 +85,50 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="container" style={{ maxWidth: 420, margin: '4rem auto', padding: '1rem' }}>
-      <h1 style={{ marginBottom: '0.5rem' }}>Passkey Login</h1>
-      <p style={{ marginBottom: '1rem', color: '#475569' }}>Use WebAuthn to register or sign in without a password.</p>
+    <main className="auth-page">
+      <div className="auth-shell">
+        <section className="auth-card">
+          <p className="auth-kicker">Passkey Access</p>
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Register or sign in with WebAuthn passkeys for a fast, passwordless experience.</p>
 
-      <label htmlFor="username" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>
-        Username
-      </label>
-      <input
-        id="username"
-        type="text"
-        value={username}
-        onChange={(event) => setUsername(event.target.value)}
-        autoComplete="username webauthn"
-        placeholder="e.g. kris"
-        style={{
-          width: '100%',
-          padding: '0.625rem 0.75rem',
-          border: '1px solid #cbd5e1',
-          borderRadius: 8,
-          marginBottom: '1rem',
-        }}
-      />
+          <label className="auth-label" htmlFor="username">
+            Username
+          </label>
+          <input
+            className="auth-input"
+            id="username"
+            type="text"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            autoComplete="username webauthn"
+            placeholder="e.g. kris"
+          />
 
-      <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-        <button
-          type="button"
-          onClick={() => void runAuthFlow('register')}
-          disabled={loadingMode !== null}
-          style={{ flex: 1, padding: '0.625rem 0.75rem' }}
-        >
-          {loadingMode === 'register' ? 'Registering...' : 'Register'}
-        </button>
-        <button
-          type="button"
-          onClick={() => void runAuthFlow('login')}
-          disabled={loadingMode !== null}
-          style={{ flex: 1, padding: '0.625rem 0.75rem' }}
-        >
-          {loadingMode === 'login' ? 'Logging in...' : 'Login'}
-        </button>
+          <div className="auth-actions">
+            <button
+              className="auth-btn auth-btn-primary"
+              type="button"
+              onClick={() => void runAuthFlow('register')}
+              disabled={loadingMode !== null}
+            >
+              {loadingMode === 'register' ? 'Registering...' : 'Register'}
+            </button>
+            <button
+              className="auth-btn auth-btn-secondary"
+              type="button"
+              onClick={() => void runAuthFlow('login')}
+              disabled={loadingMode !== null}
+            >
+              {loadingMode === 'login' ? 'Logging in...' : 'Login'}
+            </button>
+          </div>
+
+          <p aria-live="polite" className="auth-status">
+            {status}
+          </p>
+        </section>
       </div>
-
-      <p aria-live="polite" style={{ minHeight: 24, color: '#334155' }}>
-        {status}
-      </p>
     </main>
   );
 }
